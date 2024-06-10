@@ -1,68 +1,60 @@
-FROM ubuntu:jammy as downloader
+### ---------------------------------------: BASE
+FROM --platform=linux/amd64  alpine:latest AS base
 
-LABEL maintainer="matthieu.corageoud@gmail.com"
-LABEL version="2.0.0"
-LABEL description="ConnectIQ tester"
+LABEL maintainer="adam@jakab.pro"
+LABEL version="0.0.1"
+LABEL description="ConnectIQ Builder"
 
-# install required dependencies
-# curl, jq, wget, unzip are required to download the SDK
-RUN apt-get update && apt-get -y install \
-	curl \
-	jq \
-	wget \
-	unzip \
-	&& apt-get clean
+### ---------------------------------------: SYSTEM
+FROM base AS system
+RUN apk upgrade --no-cache
+# RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache bash
 
-# prepare ConnectIQ home folder
-ENV CONNECT_IQ_HOME /connectiq
-RUN mkdir -p ${CONNECT_IQ_HOME}
 
-# hardcoding the version for now
-ENV CONNECT_IQ_VERSION 7.1.1
+### ---------------------------------------: DEP-BUILDER
+FROM system AS dep-builder
+RUN apk add --no-cache curl jq wget 
+
+# ConnectIQ home folder
+RUN mkdir /connectiq
+
+# ConnectIQ version
+ENV CONNECTIQ_VERSION 7.1.1
 
 # download the SDK
-COPY downloader.sh /root/downloader.sh
-RUN /root/downloader.sh $CONNECT_IQ_HOME $CONNECT_IQ_VERSION
+COPY downloader.sh /tmp/downloader.sh
+RUN /tmp/downloader.sh /connectiq $CONNECTIQ_VERSION
 
 # manage device files
-# TODO find a way to download device bits from Garmin website
-COPY devices.zip /tmp/devices.zip
-RUN unzip /tmp/devices.zip -d /connectiq-devices
+COPY devices.tar.gz /tmp/devices.tar.gz
+RUN mkdir /connectiq-devices
+RUN tar -xf /tmp/devices.tar.gz -C /connectiq-devices
 
-FROM ubuntu:jammy as tester
 
-# install required dependencies
-# libwebkit2gtk-4.0-37, libusb-1.0-0, libsm6 and xvfb are required by the simulator
-# openssl is required to create a fake certificate
-RUN apt-get update && apt-get -y install \
-	openjdk-17-jre-headless \
-	libwebkit2gtk-4.0-37 \
-	libusb-1.0-0 \
-	libsm6 \
-	xvfb \
-	&& apt-get clean
 
-# prepare ConnectIQ home folder
-ENV CONNECT_IQ_HOME /connectiq
-RUN mkdir -p ${CONNECT_IQ_HOME}
+### ---------------------------------------: RUNNER
+FROM system AS runner
+RUN apk upgrade --no-cache
+# RUN apk add --no-cache bash
+RUN apk add --no-cache openjdk17-jre-headless
+RUN apk add --no-cache webkit2gtk
+RUN apk add --no-cache libusb
+RUN apk add --no-cache libsm
+RUN apk add --no-cache xvfb
+RUN apk add --no-cache openssl
 
-# retrieve downloaded SDK from the downloader image
-COPY --from=downloader /connectiq /connectiq
-
-# add ConnectIQ bin folder to the path
-ENV PATH ${PATH}:${CONNECT_IQ_HOME}/bin
-
-# manage device files
-# devices bits must be put in /root/.Garmin/ConnectIQ/Devices/ because this path is hard-coded in the compiler and in the simulator!
-# there is an undocumented option named "--override-devices-json" in the compiler class "com.garmin.monkeybrains.Monkeybrains.class"
-# this option allows to specify the paths where the devices bits are stored
-# unfortunately there is no such option for the simulator
+# Device files
 RUN mkdir -p /root/.Garmin/ConnectIQ/Devices
-# retrieve devices files from the downloader image
-COPY --from=downloader /connectiq-devices /root/.Garmin/ConnectIQ/Devices
+COPY --from=dep-builder /connectiq-devices /root/.Garmin/ConnectIQ/Devices
+
+# ConnectIQ home folder
+RUN mkdir /connectiq
+COPY --from=dep-builder /connectiq /connectiq
+ENV PATH ${PATH}:/connectiq/bin
 
 # copy custom tester script
-COPY tester.sh "${CONNECT_IQ_HOME}/bin/tester.sh"
+COPY tester.sh "/connectiq/bin/tester.sh"
 
-# do not use ${CONNECT_IQ_HOME} here because variable substitution won't work
-ENTRYPOINT [ "/bin/bash", "/connectiq/bin/tester.sh" ]
+ENTRYPOINT [ "/bin/sh" ]
+# CMD ["sleep", "infinity"]
