@@ -52,6 +52,22 @@ docker run -v /path/to/your/app:/app -w /app ghcr.io/matco/connectiq-tester:late
 
 This will run the compiler with type checking set to Informative, whilst using the default device and an auto-generated certificate.
 
+## Notes
+
+```bash
+# Build and publish
+docker build --tag adibacsi/connectiq-app-builder:latest .
+docker push adibacsi/connectiq-app-builder:latest
+
+# Run in interactive mode
+docker run -it adibacsi/connectiq-app-builder:latest
+
+# Run the tester command
+docker run -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /connectiq/bin/tester.sh --device=fr235 --type-check-level=2
+
+
+```
+
 ## Copyright
 
-All the resources contained in the archive `devices.zip` are the property of Garmin. These resources have been fetched from the Garmin website and have been included in this repository to facilitate the creation of the Docker image.
+All the resources contained in the archive `devices.tar.gz` are the property of Garmin. These resources have been fetched from the Garmin website and have been included in this repository to facilitate the creation of the Docker image.

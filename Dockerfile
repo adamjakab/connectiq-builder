@@ -8,7 +8,7 @@ LABEL description="ConnectIQ Builder"
 ### ---------------------------------------: SYSTEM
 FROM base AS system
 RUN apk upgrade --no-cache
-# RUN apk add --no-cache libc6-compat
+#RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache bash
 
 
@@ -56,5 +56,5 @@ ENV PATH ${PATH}:/connectiq/bin
 # copy custom tester script
 COPY tester.sh "/connectiq/bin/tester.sh"
 
-ENTRYPOINT [ "/bin/sh" ]
+ENTRYPOINT [ "/bin/bash" ]
 # CMD ["sleep", "infinity"]
