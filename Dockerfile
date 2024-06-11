@@ -1,20 +1,18 @@
 ### ---------------------------------------: BASE
-FROM --platform=linux/amd64  alpine:latest AS base
+FROM --platform=linux/amd64  ubuntu:jammy AS base
 
 LABEL maintainer="adam@jakab.pro"
-LABEL version="0.0.1"
+LABEL version="0.0.2"
 LABEL description="ConnectIQ Builder"
 
 ### ---------------------------------------: SYSTEM
 FROM base AS system
-RUN apk upgrade --no-cache
-#RUN apk add --no-cache libc6-compat
-RUN apk add --no-cache bash
+RUN apt update
+RUN apt -y install curl jq wget zip openjdk-17-jre-headless libsm6 xvfb openssl libwebkit2gtk-4.0-37 libusb-1.0-0
+RUN apt clean
 
-
-### ---------------------------------------: DEP-BUILDER
-FROM system AS dep-builder
-RUN apk add --no-cache curl jq wget 
+### ---------------------------------------: BUILDER
+FROM system AS builder
 
 # ConnectIQ home folder
 RUN mkdir /connectiq
@@ -28,33 +26,16 @@ RUN /tmp/downloader.sh /connectiq $CONNECTIQ_VERSION
 
 # manage device files
 COPY devices.tar.gz /tmp/devices.tar.gz
-RUN mkdir /connectiq-devices
-RUN tar -xf /tmp/devices.tar.gz -C /connectiq-devices
+RUN mkdir -p /root/.Garmin/ConnectIQ/Devices
+RUN tar -xf /tmp/devices.tar.gz -C /root/.Garmin/ConnectIQ/Devices
+RUN rm /tmp/devices.tar.gz
 
+# Copy custom scripts
+COPY tester.sh /connectiq/bin/
 
 
 ### ---------------------------------------: RUNNER
-FROM system AS runner
-RUN apk upgrade --no-cache
-# RUN apk add --no-cache bash
-RUN apk add --no-cache openjdk17-jre-headless
-RUN apk add --no-cache webkit2gtk
-RUN apk add --no-cache libusb
-RUN apk add --no-cache libsm
-RUN apk add --no-cache xvfb
-RUN apk add --no-cache openssl
-
-# Device files
-RUN mkdir -p /root/.Garmin/ConnectIQ/Devices
-COPY --from=dep-builder /connectiq-devices /root/.Garmin/ConnectIQ/Devices
-
-# ConnectIQ home folder
-RUN mkdir /connectiq
-COPY --from=dep-builder /connectiq /connectiq
+FROM builder AS runner
 ENV PATH ${PATH}:/connectiq/bin
 
-# copy custom tester script
-COPY tester.sh "/connectiq/bin/tester.sh"
 
-ENTRYPOINT [ "/bin/bash" ]
-# CMD ["sleep", "infinity"]

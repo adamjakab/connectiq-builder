@@ -28,5 +28,6 @@ echo "Downloading from $url"
 
 /usr/bin/wget -q "${url}" -O /tmp/connectiq.zip;
 /usr/bin/unzip /tmp/connectiq.zip -d "${PATH}"
+/usr/bin/rm /tmp/connectiq.zip
 
 echo "$VERSION"

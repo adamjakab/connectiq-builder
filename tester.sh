@@ -80,14 +80,15 @@ fi
 
 #create a fake display and run the simulator
 info "Launching simulator..."
-
 export DISPLAY=:1
-Xvfb "$DISPLAY" -screen 0 1280x1024x24 &
-
-simulator > /dev/null 2>&1 &
-
+Xvfb "${DISPLAY}" -screen 0 1280x1024x24 &
+sleep 1
+# simulator > /dev/null 2>&1 &
+simulator &
 #let time for the simulator to start
-sleep 5
+sleep 3
+info "Simulator launched."
+
 
 #run tests
 info "Running tests..."

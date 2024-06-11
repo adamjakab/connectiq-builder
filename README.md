@@ -63,7 +63,7 @@ docker push adibacsi/connectiq-app-builder:latest
 docker run -it adibacsi/connectiq-app-builder:latest
 
 # Run the tester command
-docker run -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /connectiq/bin/tester.sh --device=fr235 --type-check-level=2
+docker run --rm -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /connectiq/bin/tester.sh --device=fr235 --type-check-level=2
 
 
 ```
