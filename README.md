@@ -60,7 +60,7 @@ docker build --tag adibacsi/connectiq-app-builder:latest .
 docker push adibacsi/connectiq-app-builder:latest
 
 # Run in interactive mode
-docker run -it adibacsi/connectiq-app-builder:latest
+docker run --rm -it adibacsi/connectiq-app-builder:latest
 
 # Run the tester command
 docker run --rm -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /connectiq/bin/tester.sh --device=fr235 --type-check-level=2
