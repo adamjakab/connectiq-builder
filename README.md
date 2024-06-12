@@ -1,6 +1,7 @@
 # ConnectIQ Builder
 
 ConnectIQ Builder is a Docker image that can be used to test and build ConnectIQ applications.
+
 The image contains ConnectIQ SDK version `7.1.1` and all the device files retrieved on `2024-06-11`.
 
 ## --- NOTE: UNDER DEVELOPMENT - DO NOT USE! ---
