@@ -1,8 +1,9 @@
-# ConnectIQ Tester
+# ConnectIQ Builder
 
-ConnectIQ Tester is a Docker image that can be used to run the tests "Run No Evil" of a ConnectIQ application. The image contains the SDK, the device bits and the simulator.
+ConnectIQ Builder is a Docker image that can be used to test and build ConnectIQ applications.
+The image contains ConnectIQ SDK version `7.1.1` and all the device files retrieved on `2024-06-11`.
 
-The image currently contains ConnectIQ SDK version `7.1.1` and the device files retrieved on `2024-05-09`.
+## --- NOTE: UNDER DEVELOPMENT - DO NOT USE! ---
 
 ## Usage
 
