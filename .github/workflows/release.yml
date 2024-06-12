@@ -1,13 +1,13 @@
-name: Build and publish the image to GitHub registry
+name: Build and publish to GitHub registry
 
 permissions:
   contents: read
   packages: write
 
 on:
-  push:
-    tags:
-      - '*'
+  push
+  # push:
+    # tags: ["v*.*.*"]
 
 env:
   REGISTRY: ghcr.io
@@ -38,5 +38,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ["latest", ${{ steps.meta.outputs.tags }}]
           labels: ${{ steps.meta.outputs.labels }}
