@@ -65,8 +65,9 @@ docker run --rm -it adibacsi/connectiq-app-builder:latest
 # Run the tester command
 docker run --rm -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /connectiq/bin/tester.sh --device=fr235 --type-check-level=2
 
-
 ```
+
+regarding storing certificates in github: https://josh-ops.com/posts/storing-certificates-as-github-secrets/
 
 ## Copyright
 

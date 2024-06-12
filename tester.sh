@@ -37,20 +37,18 @@ printf "Argument(device): ${DEVICE_ID}\n"
 printf "Argument(certificate-path): ${CERTIFICATE_PATH}\n"
 printf "Argument(type-check-level): ${TYPE_CHECK_LEVEL}\n"
 
-#fail if one of the commands fails
+# Fail if any of the commands fails
 set -e
 
-#kill child processes when this scripts exists
+# Kill child processes when this scripts exists
 trap 'kill $(jobs -p)' EXIT
 
-#info displays a message passed as a parameter of read it from stdin
+# Displays a message passed as a parameter of read it from stdin
 function info {
-	#retrieve message from the parameter
 	if [[ -n $1 ]]
 	then
 		message="$1"
 		echo -e "$message"
-	#or read the message directly
 	else
 		while read -r message
 		do
@@ -59,7 +57,7 @@ function info {
 	fi
 }
 
-#generate temporary certificate if required
+# Generate temporary certificate if required
 if [[ -z $CERTIFICATE_PATH ]]
 then
 	info "Generating temporary certificate..."
@@ -67,43 +65,30 @@ then
 	CERTIFICATE_PATH=/tmp/key.der
 fi
 
-#compile application
+# Compile the application
 info "Compiling application..."
-
 monkeyc -f monkey.jungle -d "$DEVICE_ID" -o bin/app.prg -y "$CERTIFICATE_PATH" -t -l "${TYPE_CHECK_LEVEL}"
-
-#check if the compiler produced a resulting program file
 if [[ ! -f bin/app.prg ]]; then
 	info "Compilation failed!"
 	exit 1
 fi
 
-#create a fake display and run the simulator
+# Create a fake display and run the simulator
 info "Launching simulator..."
 export DISPLAY=:1
 Xvfb "${DISPLAY}" -screen 0 1280x1024x24 &
-sleep 1
-# simulator > /dev/null 2>&1 &
-simulator &
-#let time for the simulator to start
-sleep 3
-info "Simulator launched."
+simulator > /dev/null 2>&1 &
+# TODO: alternatively one could check the output and wait for "Debug: SetLayout" message from the simulator
+sleep 5
+info "Simulator ready."
 
 
-#run tests
+# Run tests
 info "Running tests..."
-
-#monkeydo exit is always 0 even when tests fail!
-#we need to collect the stdout of the test to check the result
 result_file=/tmp/result.txt
 monkeydo bin/app.prg "$DEVICE_ID" -t > $result_file
-
-#in any case, print the result
 info < $result_file
-
-#retrieve the last line of the result starting with PASSED or FAILED
 result=$(tail -1 $result_file)
-
 if [[ $result == PASSED* ]]
 then
 	info "Success!"
