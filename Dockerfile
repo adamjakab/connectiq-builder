@@ -31,11 +31,11 @@ RUN tar -xf /tmp/devices.tar.gz -C /root/.Garmin/ConnectIQ/Devices
 RUN rm /tmp/devices.tar.gz
 
 # Copy custom scripts
-COPY tester.sh /connectiq/bin/
+COPY scripts/ /scripts
 
 
 ### ---------------------------------------: RUNNER
 FROM builder AS runner
 ENV PATH ${PATH}:/connectiq/bin
 
-
+CMD ["/scripts/info.sh"]

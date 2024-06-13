@@ -5,9 +5,8 @@ permissions:
   packages: write
 
 on:
-  push
-  # push:
-  # tags: ["v*.*.*"]
+  push:
+    tags: ["v*.*.*"]
 
 env:
   REGISTRY: ghcr.io

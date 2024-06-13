@@ -2,57 +2,60 @@
 
 ConnectIQ Builder is a Docker image that can be used to test and build ConnectIQ applications.
 
-The image contains ConnectIQ SDK version `7.1.1` and all the device files retrieved on `2024-06-11`.
+## Description
 
-## --- NOTE: UNDER DEVELOPMENT - DO NOT USE! ---
+The docker image is always published in the [package repository](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder) and it can be pulled from the Github Container Repository (ghcr.io):
+
+```bash
+docker pull ghcr.io/adamjakab/connectiq-builder:latest
+```
+
+The image contains:
+
+- the ConnectIQ SDK version `7.1.1`
+- the device files retrieved on `2024-06-11`
+- the scripts directory allowing you to build and test your ConnectIQ app
 
 ## Usage
 
-The image requires to bind the code of your application to a folder in the container and to set the working directory of the container to the same folder.
+The generic usage of the container with any of the below described scripts is as follows:
 
-The Docker command has the following optional parameters:
+**docker run -v `[local app path]`:`[container app path]` -w `[container app path]` ghcr.io/adamjakab/connectiq-builder:latest `[script to run]` `[script paameters]`**
 
-- --device=DEVICE_ID: the id of one device supported by your application, as listed in your `manifest.xml` file, that will be used to run the tests. If you don't specify a device id, it will default to `fenix7`.
-- --certificate-path=CERT_PATH: the path of the certificate that will be used to compile the application relatively to the folder of your application. If you don't provide one, a temporary certificate will be generated automatically.
-- --type-check-level=LEVEL: the type check level to use when building the application. By default `Strict` type checking is used but you can change this by using any of the values described [here](https://developer.garmin.com/connect-iq/monkey-c/monkey-types/): 0 = Silent | 1 = Gradual | 2 = Informative | 3 = Strict [default].
+The `-v` flag binds the folder containing your application to the folder in the container. So, `[local app path]` needs to be substituted with the path of your ConnectIQ application and `[container app path]` can be any path where the same ConnectIQ application will be available inside the container.
 
-The simplest command is the following:
+The `-w` flag sets the working directory of the container and it must be pointing to the same folder which was chosen above: `[container app path]`
 
-```
-docker run -v /path/to/your/app:/app -w /app ghcr.io/matco/connectiq-tester:latest
-```
+The `[script to run]` and the `[script paameters]` parameters are described in detail below for each script. Putting this all together, an example of how your command will lookine can be:
 
-The flag `-v` binds the folder containing your application to the `app` folder in the container. The flag `-w` tells the container to work in this repository (it is the working directory). It is required that the working directory matches the path where you bound your application in the container. With this command, a temporary certificate will be created, and the application will be tested using a Fenix 7.
-
-### Note on deprecated positional arguments
-
-In previous versions positional arguments were used to specify the device and the certificate path. Device was first and certificate path was second. You can still use the docker command with positional arguments but you will receive a warning. In some future version this will be removed and the above described named arguments will be used. If you are using positional arguments, you are advised to change them.
-
-## Examples
-
-If you want to specify a difference device, just run:
-
-```
-docker run -v /path/to/your/app:/app -w /app ghcr.io/matco/connectiq-tester:latest --device=venu2
+```bash
+docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest /scripts/info.sh
 ```
 
-In this case, the application will be tested using a Venu 2.
+## Usage: The Info Script (/scripts/info.sh)
 
-To specify your own certificate, just run:
+This script has no paramater and being the default script, it can be run even without specifying it in the `[script to run]` option.
+It will return some basic information about the container and about the application itself. This script is mostly used for debugging.
 
-```
-docker run -v /path/to/your/app:/app -w /app ghcr.io/matco/connectiq-tester:latest --device=venu2 --certificate-path=certificate/key.der
-```
+Example:
 
-In this case, the application will be tested using a Venu 2 and the certificate used to compile the application will be `/path/to/your/app/certificate/key.der`.
-
-To relax the type checking when building the application, just run:
-
-```
-docker run -v /path/to/your/app:/app -w /app ghcr.io/matco/connectiq-tester:latest --type-check-level=2
+```bash
+docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest /scripts/info.sh
+# or
+docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest
 ```
 
-This will run the compiler with type checking set to Informative, whilst using the default device and an auto-generated certificate.
+## Usage: The test script (/scripts/test.sh)
+
+The test script has the main objective of running the tests defined in your applicastion and reporting back if these test were run successfully.
+To be able to run the test, your application will be first compiled with `monkeyc` then attaching the simulator, it will run all tests using the `monkeydo`
+command.
+
+The script has the following optional parameters:
+
+- `--device=DEVICE_ID`: the id of one device supported by your application, as listed in your `manifest.xml` file, that will be used to run the tests. If you don't specify a device id, it will default to `fenix7`.
+- `--type-check-level=LEVEL`: the type check level to use when building the application. By default `Strict` type checking is used but you can change this by using any of the values described [here](https://developer.garmin.com/connect-iq/monkey-c/monkey-types/): 0 = Silent | 1 = Gradual | 2 = Informative | 3 = Strict [default].
+- `--certificate=CERTIFICATE`: [!!! NOT YET AVAILABLE !!!] the certificate that will be used to compile the application. The certificate needs to be passed in a base64 encoded format. On a Linux box it is as simple as running `base64 /path/to/my/cert`, and pasting the output in this parameter. If you don't provide one, a temporary certificate will be generated automatically.
 
 ## Notes
 
@@ -65,7 +68,7 @@ docker push adibacsi/connectiq-app-builder:latest
 docker run --rm -it adibacsi/connectiq-app-builder:latest
 
 # Run the tester command
-docker run --rm -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /connectiq/bin/tester.sh --device=fr235 --type-check-level=2
+docker run --rm -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /scripts/test.sh --device=fr235 --type-check-level=2
 
 ```
 
