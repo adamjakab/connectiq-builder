@@ -1,7 +1,11 @@
 #!/bin/bash
 
-printf "Welcome to the ConnectIQ Builder - Info script!\n"
+# Include common functions
+source helpers/common_functions.sh
 
-du -sh .
+loginfo "Welcome to the ConnectIQ Builder - Info script!"
+
+foldersize=$(du -sh .)
+loginfo "App folder size: ${foldersize}"
 
 exit 0

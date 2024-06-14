@@ -1,15 +1,13 @@
 ### ---------------------------------------: BASE
 FROM --platform=linux/amd64  ubuntu:jammy AS base
 
-LABEL maintainer="adam@jakab.pro"
-LABEL version="0.0.2"
-LABEL description="ConnectIQ Builder"
 
 ### ---------------------------------------: SYSTEM
 FROM base AS system
 RUN apt update
 RUN apt -y install curl jq wget zip openjdk-17-jre-headless libsm6 xvfb openssl libwebkit2gtk-4.0-37 libusb-1.0-0
 RUN apt clean
+
 
 ### ---------------------------------------: BUILDER
 FROM system AS builder
