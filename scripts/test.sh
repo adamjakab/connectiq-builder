@@ -1,33 +1,8 @@
 #!/bin/bash
 
 # Include common functions
-source helpers/common_functions.sh
-
-# Set some defaults
-DEVICE_ID=fr235
-CERTIFICATE=""
-TYPE_CHECK_LEVEL=3
-
-# Parse arguments
-while [ $# -gt 0 ]; do
-  case "$1" in
-    --device=*)
-      DEVICE_ID="${1#*=}"
-      ;;
-    --certificate=*)
-      CERTIFICATE_PATH="${1#*=}"
-      ;;
-    --type-check-level=*)
-      TYPE_CHECK_LEVEL="${1#*=}"
-      ;;
-    *)
-      printf "**********************************************************\n"
-      printf "Error: Unknown argument: '${1}'.\n"
-      printf "**********************************************************\n"
-	  exit 1
-  esac
-  shift
-done
+source "$(dirname "$(realpath "$0")")/helpers/common_functions.sh"
+loginfo "Welcome to the ConnectIQ Builder - Test script!"
 
 # Display parsed arguments 
 printf "Argument(device): ${DEVICE_ID}\n"
