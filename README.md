@@ -26,7 +26,7 @@ The `-v` flag binds the folder containing your application to the folder in the 
 
 The `-w` flag sets the working directory of the container and it must be pointing to the same folder which was chosen above: `[container app path]`
 
-The `[script to run]` and the `[script parameters]` parameters are described in detail below for each script. Putting this all together, an example of how your command will lookine can be:
+The `[script to run]` and the `[script parameters]` parameters are described in detail below for each script. Putting this all together, an example of how your command will look like:
 
 ```bash
 docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest /scripts/info.sh
@@ -57,22 +57,21 @@ The script has the following optional parameters:
 - `--type-check-level=LEVEL`: the type check level to use when building the application. By default `Strict` type checking is used but you can change this by using any of the values described [here](https://developer.garmin.com/connect-iq/monkey-c/monkey-types/): 0 = Silent | 1 = Gradual | 2 = Informative | 3 = Strict [default].
 - `--certificate=CERTIFICATE`: [!!! NOT YET AVAILABLE !!!] the certificate that will be used to compile the application. The certificate needs to be passed in a base64 encoded format. On a Linux box it is as simple as running `base64 /path/to/my/cert`, and pasting the output in this parameter. If you don't provide one, a temporary certificate will be generated automatically.
 
+## Usage: The build script (/scripts/build.sh)
+
+NOT AVAILABLE! I still have to write this. The idea is to create a project release by compiling the application for all devices and making the package ready for being uploaded to the ConnectIQ store.
+
 ## Notes
 
-```bash
-# Build and publish
-docker build --tag adibacsi/connectiq-app-builder:latest .
-docker push adibacsi/connectiq-app-builder:latest
+- Document explaining how to store certificates in github: https://josh-ops.com/posts/storing-certificates-as-github-secrets/
 
-# Run in interactive mode
-docker run --rm -it adibacsi/connectiq-app-builder:latest
+## Contributions
 
-# Run the tester command
-docker run --rm -v /mnt/Code/Garmin/iHIIT:/_build_ -w /_build_ adibacsi/connectiq-app-builder:latest /scripts/test.sh --device=fr235 --type-check-level=2
+Yes, please.
 
-```
+## Credits
 
-regarding storing certificates in github: https://josh-ops.com/posts/storing-certificates-as-github-secrets/
+This repo is a fork of the [matco/connectiq-tester](https://github.com/matco/connectiq-tester) repo.
 
 ## Copyright
 
