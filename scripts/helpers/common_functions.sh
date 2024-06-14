@@ -14,7 +14,7 @@ function loginfo {
 	else
 		while read -r message
 		do
-			info "$message"
+			loginfo "$message"
 		done
 	fi
 }
@@ -49,7 +49,7 @@ while [ $# -gt 0 ]; do
       loginfo "Error: Unknown argument: '${1}'."
       loginfo "**********************************************************"
       showhelp
-	  exit 1
+	    exit 1
   esac
   shift
 done
