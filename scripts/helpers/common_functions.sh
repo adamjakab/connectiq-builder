@@ -4,8 +4,6 @@
 # Usage from the scripts dir: source "$(dirname "$(realpath "$0")")/helpers/common_functions.sh"
 
 
-
-
 # Displays a message passed as a parameter of read it from stdin
 function loginfo {
 	if [[ -n $1 ]]
@@ -21,16 +19,19 @@ function loginfo {
 
 function showhelp {
     loginfo "The following agrguments can be used:"
-    loginfo " --device=DEVICE [default: fr235] Select the device for which the application should be built. "
-    loginfo " --type-check-level=LEVEL [default: 3] Set the type check level."
+    loginfo "\t--device=DEVICE [default: fr235] Select the device for which the application should be built."
+    loginfo "\t--type-check-level=LEVEL [default: 2] Set the type check level."
+    loginfo "\t--certificate-path=PATH Set the path for the certificate."
+    loginfo "\t--package-name=NAME Set the file name of the package."
 }
 
-### THe below section will be run as soon as this script is sourced from other scripts
+### The below section will be run as soon as this script is sourced from other scripts
 
 # Set some defaults
 DEVICE_ID=fr235
-CERTIFICATE=""
-TYPE_CHECK_LEVEL=3
+TYPE_CHECK_LEVEL=2
+CERTIFICATE_PATH=""
+PACKAGE_NAME="package.iq"
 
 # Parse script arguments
 while [ $# -gt 0 ]; do
@@ -38,11 +39,14 @@ while [ $# -gt 0 ]; do
     --device=*)
       DEVICE_ID="${1#*=}"
       ;;
-    --certificate=*)
-      CERTIFICATE_PATH="${1#*=}"
-      ;;
     --type-check-level=*)
       TYPE_CHECK_LEVEL="${1#*=}"
+      ;;
+    --certificate-path=*)
+      CERTIFICATE_PATH="${1#*=}"
+      ;;
+    --package-name=*)
+      PACKAGE_NAME="${1#*=}"
       ;;
     *)
       loginfo "**********************************************************"

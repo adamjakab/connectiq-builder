@@ -35,5 +35,4 @@ COPY scripts/ /scripts
 ### ---------------------------------------: RUNNER
 FROM builder AS runner
 ENV PATH ${PATH}:/connectiq/bin
-
 CMD ["/scripts/info.sh"]

@@ -47,23 +47,39 @@ docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:late
 
 ## Usage: The test script (/scripts/test.sh)
 
-The test script has the main objective of running the tests defined in your applicastion and reporting back if these test were run successfully.
+The test script has the main objective of running the tests defined in your application and reporting back if these test were run successfully.
 To be able to run the test, your application will be first compiled with `monkeyc` then attaching the simulator, it will run all tests using the `monkeydo`
 command.
 
 The script has the following optional parameters:
 
-- `--device=DEVICE_ID`: the id of one device supported by your application, as listed in your `manifest.xml` file, that will be used to run the tests. If you don't specify a device id, it will default to `fenix7`.
-- `--type-check-level=LEVEL`: the type check level to use when building the application. By default `Strict` type checking is used but you can change this by using any of the values described [here](https://developer.garmin.com/connect-iq/monkey-c/monkey-types/): 0 = Silent | 1 = Gradual | 2 = Informative | 3 = Strict [default].
-- `--certificate=CERTIFICATE`: [!!! NOT YET AVAILABLE !!!] the certificate that will be used to compile the application. The certificate needs to be passed in a base64 encoded format. On a Linux box it is as simple as running `base64 /path/to/my/cert`, and pasting the output in this parameter. If you don't provide one, a temporary certificate will be generated automatically.
+- `--device=DEVICE_ID`: the id of one of the devices supported by your application (as listed in your `manifest.xml` file). If you don't specify a device id, it will default to `fr235`.
+- `--type-check-level=LEVEL`: the type check level to use when building the application. By default `Informative` type checking is used but you can change this by using any of the values described [here](https://developer.garmin.com/connect-iq/monkey-c/monkey-types/): 0 = Silent | 1 = Gradual | 2 = Informative [default] | 3 = Strict.
+- `--certificate-path=PATH`: The path of the certificate in the container. If you don't provide one, a temporary certificate will be generated automatically.
 
-## Usage: The build script (/scripts/build.sh)
+## Usage: The build script (/scripts/package.sh)
 
-NOT AVAILABLE! I still have to write this. The idea is to create a project release by compiling the application for all devices and making the package ready for being uploaded to the ConnectIQ store.
+The package script will package your application into a single file ready to be uploaded to ConnectIQ Store.
+The script will run the `monkeyc` compiler with the `--package-app` and the `--release` options.
 
-## Notes
+The script has the same parameters as the test script with the following notes:
 
-- Document explaining how to store certificates in github: https://josh-ops.com/posts/storing-certificates-as-github-secrets/
+- `--certificate-path=PATH`: This is a required parameter here. Hint: you can use additional `-v` or `--volume` parameters on the `docker run` command to mount a specific folder where you keep your certificate.
+- `--package-name=NAME`: This optional parameter allows you to define how the package should be named (the file name). If you don't define it, your package will be called `package.iq`.
+
+## Developers
+
+When working locally, you will first want to build / rebuild the docker image:
+
+```bash
+docker build --tag adamjakab/connectiq-builder:latest .
+```
+
+and then run any of the scripts by someting similar to this:
+
+```bash
+docker run --rm -v /mnt/secrets/ConnectIQ/certs:/certificate -v /mnt/code/Garmin/myApp:/_build_ -w /_build_ adamjakab/connectiq-builder:latest /scripts/package.sh --type-check-level=2 --certificate-path=/certificate/my_developer_key --package-name=myApp_v1.2.3.iq
+```
 
 ## Contributions
 
