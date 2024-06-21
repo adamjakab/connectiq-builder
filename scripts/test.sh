@@ -13,8 +13,8 @@ loginfo "Argument(certificate-path): ${CERTIFICATE_PATH}"
 set -e
 
 # Kill child processes when this scripts exists
-#trap 'kill $(jobs -p)' EXIT
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+trap 'kill $(jobs -p)' EXIT
+#trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 # Generate temporary certificate if required
 if [[ -z $CERTIFICATE_PATH ]]
