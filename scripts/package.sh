@@ -33,4 +33,5 @@ if [[ ! -f ${pkgpath} ]]; then
 	exit 1
 fi
 
-loginfo "Package built: '${pkgpath}'."
+loginfo "Package built."
+loginfo "Package path: $(realpath "${pkgpath}")"
