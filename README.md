@@ -54,6 +54,7 @@ command.
 The script has the following optional parameters:
 
 - `--device=DEVICE_ID`: the id of one of the devices supported by your application (as listed in your `manifest.xml` file). If you don't specify a device id, it will default to `fr235`.
+- `--devices=DEVICE_ID_LIST`: a comma separated list of device ids. If you pass this parameter the single `--device` parametrer will be ignored. This parameter is only used when running the test script. This parameter was introduced to optimize testing and intesd of firing up a container for each device, it is possible to execute tests for all deviced using a single container.
 - `--type-check-level=LEVEL`: the type check level to use when building the application. By default `Informative` type checking is used but you can change this by using any of the values described [here](https://developer.garmin.com/connect-iq/monkey-c/monkey-types/): 0 = Silent | 1 = Gradual | 2 = Informative [default] | 3 = Strict.
 - `--certificate-path=PATH`: The path of the certificate in the container. If you don't provide one, a temporary certificate will be generated automatically.
 

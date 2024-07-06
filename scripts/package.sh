@@ -2,7 +2,7 @@
 
 # Include common functions
 source "$(dirname "$(realpath "$0")")/helpers/common_functions.sh"
-loginfo "Welcome to the ConnectIQ Builder ::: Package script!"
+loginfo "Welcome to the ConnectIQ Builder ::: Package script"
 
 # Display parsed arguments 
 loginfo "Argument(device): ${DEVICE_ID}"
