@@ -42,10 +42,10 @@ compile_application () {
 	apppath="bin/testapp_${DEVICE_ID}.prg"
 	result_file="/tmp/result_${DEVICE_ID}.txt"
 	loginfo "Compiling application for device ${DEVICE_ID}..."
-	monkeyc -f monkey.jungle -d "$DEVICE_ID" -o ${apppath} -y "$CERTIFICATE_PATH" --build-stats 1 -t -l "${TYPE_CHECK_LEVEL}" > $result_file 2>&1
+	try_nodie monkeyc -f monkey.jungle -d "$DEVICE_ID" -o ${apppath} -y "$CERTIFICATE_PATH" --build-stats 1 -t -l "${TYPE_CHECK_LEVEL}" > $result_file 2>&1
 	if [[ ! -f ${apppath} ]]; then
 		loginfo "Compilation failed!"
-		loginfo < $result_file
+		loginfo $result_file
 		exit 1
 	else
 		debuginfo $result_file
