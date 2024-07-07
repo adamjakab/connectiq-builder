@@ -42,6 +42,6 @@ jobs:
           context: .
           push: true
           # tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ github.repository }}-SDK-${{ matrix.CONNECTIQ_SDK_VERSION }}
+          tags: ${{ github.repository }}-sdk-v${{ matrix.CONNECTIQ_SDK_VERSION }}
           labels: SDK-${{ matrix.CONNECTIQ_SDK_VERSION }}
 # use: ${{ matrix.CONNECTIQ_SDK_VERSION }}
