@@ -1,26 +1,38 @@
 # ConnectIQ Builder
 
-ConnectIQ Builder is a Docker image that can be used to test and build ConnectIQ applications.
+ConnectIQ Builder builds Docker images that can be used to test and build ConnectIQ applications.
 
 ## Description
 
-The docker image is always published in the [package repository](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder) and it can be pulled from the Github Container Repository (ghcr.io):
+The docker images are published in different package respositories depending on the ConnectIQ SDK version they contain. You can see the full list here: [ConnectIQ Builder Packages](https://github.com/adamjakab?tab=packages&repo_name=connectiq-builder)
 
-```bash
-docker pull ghcr.io/adamjakab/connectiq-builder:latest
-```
+Each image contains:
 
-The image contains:
+- an ubuntu:jammy base system
+- the ConnectIQ SDK
+- all the device files for the simulator
+- the scripts directory allowing you to test and package your ConnectIQ app
 
-- the ConnectIQ SDK version `7.1.1`
-- the device files retrieved on `2024-06-11`
-- the scripts directory allowing you to build and test your ConnectIQ app
+## Supported Connect IQ SDKs
+
+- [7.2.1](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v7.2.1)
+- [7.2.0](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v7.2.0)
+- [7.1.1](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v7.1.1)
+- [7.1.0](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v7.1.0)
+- [6.4.2](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v6.4.2)
+- [6.3.1](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v6.3.1)
+- [6.2.2](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v6.2.2)
+- [4.2.4](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v4.2.4)
+- [4.1.7](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v4.1.7)
+- [4.0.10](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v4.0.10)
+- [3.2.5](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v3.2.5)
+- [3.1.9](https://github.com/adamjakab/connectiq-builder/pkgs/container/connectiq-builder-sdk-v3.1.9)
 
 ## Usage
 
 The generic usage of the container with any of the below described scripts is as follows:
 
-**docker run -v `[local app path]`:`[container app path]` -w `[container app path]` ghcr.io/adamjakab/connectiq-builder:latest `[script to run]` `[script parameters]`**
+**docker run -v `[local app path]`:`[container app path]` -w `[container app path]` ghcr.io/adamjakab/connectiq-builder-sdk-v`x.x.x`:latest `[script to run]` `[script parameters]`**
 
 The `-v` flag binds the folder containing your application to the folder in the container. So, `[local app path]` needs to be substituted with the path of your ConnectIQ application and `[container app path]` can be any path where the same ConnectIQ application will be available inside the container.
 
@@ -29,20 +41,17 @@ The `-w` flag sets the working directory of the container and it must be pointin
 The `[script to run]` and the `[script parameters]` parameters are described in detail below for each script. Putting this all together, an example of how your command will look like:
 
 ```bash
-docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest /scripts/info.sh
+docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder-sdk-v7.2.1:latest /scripts/info.sh
 ```
 
 ## Usage: The info script (/scripts/info.sh)
 
-This script has no paramater and being the default script, it can be run even without specifying it in the `[script to run]` option.
-It will return some basic information about the container and about the application itself. This script is mostly used for debugging.
+This script has no paramater and being the default script, it can be run even without specifying it in the `[script to run]` option. It will return some basic information about the container and about the application itself. This script is mostly used for debugging.
 
 Example:
 
 ```bash
-docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest /scripts/info.sh
-# or
-docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder:latest
+docker run -v /code/my_app:/app -w /app ghcr.io/adamjakab/connectiq-builder-sdk-v7.2.1:latest /scripts/info.sh
 ```
 
 ## Usage: The test script (/scripts/test.sh)
@@ -73,22 +82,20 @@ The script has the same parameters as the test script with the following notes:
 When working locally, you will first want to build / rebuild the docker image:
 
 ```bash
-docker build --tag adamjakab/connectiq-builder:latest .
+docker build --build-arg SDK_VERSION=7.2.1 --tag adamjakab/connectiq-builder-sdk-v7.2.1:latest .
 ```
 
 and then run any of the scripts by someting similar to this:
 
 ```bash
-docker run --rm -v /mnt/secrets/ConnectIQ/certs:/certificate -v /mnt/code/Garmin/myApp:/_build_ -w /_build_ adamjakab/connectiq-builder:latest /scripts/package.sh --type-check-level=2 --certificate-path=/certificate/my_developer_key --package-name=myApp_v1.2.3.iq
+docker run --rm -v /mnt/secrets/ConnectIQ/certs:/certificate -v /mnt/code/Garmin/myApp:/_build_ -w /_build_ adamjakab/onnectiq-builder-sdk-v7.2.1:latest /scripts/package.sh --type-check-level=2 --certificate-path=/certificate/my_developer_key --package-name=myApp_v1.2.3.iq
 ```
 
-## Supported SDKs
+the image can be pulled
 
-- 7.2.1
-- 7.2.0
-- 7.1.1
-- 7.1.0
-- 6.4.2
+```bash
+docker pull ghcr.io/adamjakab/onnectiq-builder-sdk-v7.2.1:latest
+```
 
 ## Contributions
 
