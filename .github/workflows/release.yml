@@ -41,8 +41,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          build-args:
-            SDK_VERSION: ${{ matrix.CONNECTIQ_SDK_VERSION }}
+          build-args: SDK_VERSION=${{ matrix.CONNECTIQ_SDK_VERSION }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           #tags: ${{ github.repository }}-sdk-v${{ matrix.CONNECTIQ_SDK_VERSION }}
