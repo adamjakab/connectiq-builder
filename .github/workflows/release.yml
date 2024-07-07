@@ -30,18 +30,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Extract metadata
-      #   id: meta
-      #   uses: docker/metadata-action@v5
-      #   with:
-      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-sdk-v${{ matrix.CONNECTIQ_SDK_VERSION }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          # tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ github.repository }}-sdk-v${{ matrix.CONNECTIQ_SDK_VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}
+          #tags: ${{ github.repository }}-sdk-v${{ matrix.CONNECTIQ_SDK_VERSION }}
           labels: SDK-${{ matrix.CONNECTIQ_SDK_VERSION }}
-# use: ${{ matrix.CONNECTIQ_SDK_VERSION }}
