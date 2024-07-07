@@ -1,7 +1,6 @@
 ### ---------------------------------------: BASE
 FROM --platform=linux/amd64  ubuntu:jammy AS base
 
-
 ### ---------------------------------------: SYSTEM
 FROM base AS system
 RUN apt update
@@ -12,15 +11,15 @@ RUN apt clean
 ### ---------------------------------------: BUILDER
 FROM system AS builder
 
-# ConnectIQ home folder
+# Set SDK VERSION
+ARG SDK_VERSION
+ENV SDK_VERSION=${SDK_VERSION:-7.1.1}
+RUN echo "Using Connect IQ SDK version: $SDK_VERSION"
+
+# Make the ConnectIQ home folder and download the SDK
 RUN mkdir /connectiq
-
-# ConnectIQ version
-ENV CONNECTIQ_VERSION 7.1.1
-
-# download the SDK
 COPY downloader.sh /tmp/downloader.sh
-RUN /tmp/downloader.sh /connectiq $CONNECTIQ_VERSION
+RUN /tmp/downloader.sh /connectiq $SDK_VERSION
 
 # manage device files
 COPY devices.tar.gz /tmp/devices.tar.gz

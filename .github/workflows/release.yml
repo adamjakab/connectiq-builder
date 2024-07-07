@@ -15,6 +15,10 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        CONNECTIQ_SDK_VERSION:
+          - 7.1.1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,16 +30,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      # - name: Extract metadata
+      #   id: meta
+      #   uses: docker/metadata-action@v5
+      #   with:
+      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          # tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ github.repository }}-SDK-${{ matrix.CONNECTIQ_SDK_VERSION }}
+          labels:
+            - SDK-${{ matrix.CONNECTIQ_SDK_VERSION }}
+# use: ${{ matrix.CONNECTIQ_SDK_VERSION }}

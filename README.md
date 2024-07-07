@@ -82,6 +82,14 @@ and then run any of the scripts by someting similar to this:
 docker run --rm -v /mnt/secrets/ConnectIQ/certs:/certificate -v /mnt/code/Garmin/myApp:/_build_ -w /_build_ adamjakab/connectiq-builder:latest /scripts/package.sh --type-check-level=2 --certificate-path=/certificate/my_developer_key --package-name=myApp_v1.2.3.iq
 ```
 
+## Supported SDKs
+
+- 7.2.1
+- 7.2.0
+- 7.1.1
+- 7.1.0
+- 6.4.2
+
 ## Contributions
 
 Yes, please.
